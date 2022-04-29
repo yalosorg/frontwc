@@ -16,7 +16,7 @@ header {
 }
 
 main {
-    margin: 1rem 10%;
+    margin: 2rem 10%;
     font-family: 'Roboto', sans-serif;
 }
 
@@ -258,4 +258,60 @@ main {
 
 .register-form .switch-to-login:hover {
     color: black;
+}
+
+
+
+
+
+
+
+
+.users {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.users .user-link {
+    color: #7c7c7c;
+    border: 1px solid #7c7c7c;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    transition: 300ms;
+}
+
+.users .user-link:hover {
+    background-color: #7c7c7c;
+    color: white;
+}
+
+
+
+
+
+
+
+
+.user-info {
+    background-color: white;
+    border-radius: 5px;
+    padding: 1rem;
+    border: 1px solid black;
+    margin: 1rem auto 2rem 1rem;
+    max-width: 300px;
+    color: black;
+}
+
+.download-unique {
+    color: black;
+    border: 1px solid black;
+    padding: 1rem;
+    border-radius: 5px;
+    transition: 300ms;
+}
+
+.download-unique:hover {
+    color: white;
+    background-color: black;
 }
