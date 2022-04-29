@@ -130,7 +130,7 @@ main {
 
 .login-form {
     margin: 1rem auto;
-    height: 400px;
+    height: 320px;
     width: 300px;
     border: 2px solid #639bc2;
     border-radius: 1rem;
@@ -145,9 +145,117 @@ main {
 
 .login-form .title-container .title {
     margin-bottom: 1rem;
-    /*color: black;*/
+    color: black;
 }
 
 .login-form form {
     padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.login-form form .input {
+    padding: 0.5rem 0;
+    margin: 1rem 2rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-indent: 16px;
+}
+
+.login-form form .submit-button {
+    margin: 1rem 5rem 0 5rem;
+    padding: 0.3rem 0;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.login-form form .submit-button:hover {
+    background-color: black;
+    color: white;
+}
+
+.login-form .switch-to-register {
+    font-size: small;
+    transition: color 200ms;
+    color: #7c7c7c;
+}
+
+.login-form .switch-to-register:hover {
+    color: black;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.register-form {
+    margin: 1rem auto;
+    height: 380px;
+    width: 300px;
+    border: 2px solid #639bc2;
+    border-radius: 1rem;
+    text-align: center;
+    color: #7c7c7c;
+}
+
+.register-form .title-container {
+    margin: 1rem 0;
+    border-bottom: 2px solid #639bc2;
+}
+
+.register-form .title-container .title {
+    margin-bottom: 1rem;
+    color: black;
+}
+
+.register-form form {
+    padding: 0.5rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.register-form form .input {
+    padding: 0.5rem 0;
+    margin: 1rem 2rem;
+    border: 1px solid black;
+    border-radius: 5px;
+    text-indent: 16px;
+}
+
+.register-form form .submit-button {
+    margin: 1rem 5rem 0 5rem;
+    padding: 0.3rem 0;
+    border: 1px solid black;
+    border-radius: 5px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: 200ms;
+}
+
+.register-form form .submit-button:hover {
+    background-color: black;
+    color: white;
+}
+
+.register-form .switch-to-login {
+    font-size: small;
+    transition: color 200ms;
+    color: #7c7c7c;
+}
+
+.register-form .switch-to-login:hover {
+    color: black;
 }
