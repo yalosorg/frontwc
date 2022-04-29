@@ -46,7 +46,9 @@
             let login = document.querySelector('.input-login').value;
             let password = document.querySelector('.input-password').value;
 
-            fetch('/api/auth/login', { method: 'post', body: JSON.stringify({
+            let loc = window.location;
+
+            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/auth/login`, { method: 'post', body: JSON.stringify({
                 login: login,
                 password: password
             })}).catch(console.error);
