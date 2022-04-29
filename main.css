@@ -316,6 +316,20 @@ main {
     background-color: black;
 }
 
+.ban-user {
+    margin: 0 0 0 1rem;
+    color: red;
+    border: 1px solid red;
+    padding: 1rem;
+    border-radius: 5px;
+    transition: 300ms;
+}
+
+.ban-user:hover {
+    color: white;
+    background-color: red;
+}
+
 
 
 

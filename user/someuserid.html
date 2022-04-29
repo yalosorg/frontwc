@@ -24,14 +24,20 @@
     </header>
 
     <main>
-        <h2>Информация о пользователе #SOMEUNIQUEID</h2>
-        
-        <div class="user-info">
-            <h3>Username: USERNAME</h3>
-            <h3>Password: PASSWORD</h3>
-        </div>
+        <div class="user-container">
+            <h2>Информация о пользователе #SOMEUNIQUEID</h2>
+            
+            <div class="user-info">
+                <h3>Email: EMAIL@PROVIDER.COM</h3>
+                <h3>Username: USERNAME</h3>
+                <h3>Password: PASSWORD</h3>
+            </div>
 
-        <a class="download-unique" href="/admin/download-unique?id=SOME_UNIQUE_USER_ID">Скачать уникальные ресурсы</a>
+            <div class="user-buttons">
+                <a class="download-unique" href="/api/download-unique?id=SOME_UNIQUE_USER_ID">Скачать уникальные ресурсы</a>
+                <a class="ban-user" href="/api/ban-user?id=SOME_UNIQUE_USER_ID">Заблокировать</a>
+            </div>
+        </div>
     </main>
 </body>
 </html>
