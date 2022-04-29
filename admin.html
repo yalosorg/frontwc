@@ -32,7 +32,33 @@
         </div>
 
         <h2 style="margin: 1rem">Upload</h2>
-        <!--UPLOAD MULTIPLE FILES NOT IMPLEMENTED YET-->
+        
+        <form class="upload-form">
+            <input type="file" class="file-upload">
+            <button type="submit">Загрузить</button>
+        </form>
+
+        <button class="final-upload">Опубликовать</button>
     </main>
+
+    <script>
+        let form = document.querySelector('.upload-form');
+        const input = document.querySelector('.file-upload');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData();
+
+            formData.append('resource.zip', input.files[0]);
+
+            fetch('/api/upload', { method: 'post', body: formData }).catch(console.error);
+        });
+
+        let final = document.querySelector('.final-upload');
+        final.addEventListener('click', () => {
+            fetch('/api/upload-end', { method: 'post', body: new FormData() }).catch(console.error);
+        });
+    </script>
 </body>
 </html>
