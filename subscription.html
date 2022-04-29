@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Подписка | WaterCloud</title>
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="main.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="/img/logo.png">
+            <a href="/"><h1>Water<span class="cloud-colored">Cloud</span></h1></a>
+        </div>
+
+        <nav class="nav-links">
+            <a href="/storage.html">Хранилище</a>
+            <a href="/subscription.html">Подписка</a>
+            <a href="/login.html">Войти</a>
+            <a href="/logout.html">Выйти</a>
+        </nav>
+    </header>
+
+    <main>
+        <div class="subscription-form">
+            <div class="title-container">
+                <h2 class="title">Выберите тариф</h2>
+            </div>
+
+            <div class="options">
+                <div class="option option-first"><h2>Месячный</h2></div>
+                <div class="option option-second"><h2>3-х месячный</h2></div>
+                <div class="option option-third"><h2>Годовой</h2></div>
+            </div>
+
+            <div class="button-pay"><h2>Оплатить</h2></div>
+        </div>
+    </main>
+
+    <script>
+        let option = 0;
+        let first = document.querySelector('.option-first');
+        let second = document.querySelector('.option-second');
+        let third = document.querySelector('.option-third');
+
+        first.addEventListener('click', () => {
+            first.classList.add('active');
+            second.classList.remove('active');
+            third.classList.remove('active');
+            option = 1;
+        });
+
+        second.addEventListener('click', () => {
+            first.classList.remove('active');
+            second.classList.add('active');
+            third.classList.remove('active');
+            option = 2;
+        });
+
+        third.addEventListener('click', () => {
+            first.classList.remove('active');
+            second.classList.remove('active');
+            third.classList.add('active');
+            option = 3;
+        });
+
+        document.querySelector('.button-pay').addEventListener('click', () => {
+            if (option <= 0 || option > 3) return;
+
+            // FETCH GENERATED LINK FROM SERVER
+        });
+    </script>
+</body>
+</html>
