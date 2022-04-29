@@ -54,13 +54,13 @@
             
             let loc = window.location;
 
-            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/upload`, { method: 'post', body: formData }).catch(console.error);
+            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/upload`, { method: 'post', headers: { 'Content-Type': 'multipart/form-data'}, body: formData }).catch(console.error);
         });
 
         let final = document.querySelector('.final-upload');
         final.addEventListener('click', () => {
             let loc = window.location;
-            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/upload-end`, { method: 'post', body: new FormData() }).catch(console.error);
+            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/upload-end`, { method: 'post', headers: { 'Content-Type': 'multipart/form-data'}, body: new FormData() }).catch(console.error);
         });
     </script>
 </body>

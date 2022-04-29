@@ -48,10 +48,16 @@
 
             let loc = window.location;
 
-            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/auth/login`, { method: 'post', body: JSON.stringify({
-                login: login,
-                password: password
-            })}).catch(console.error);
+            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/auth/login`, {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    login: login,
+                    password: password
+                })
+            }).catch(console.error);
         });
     </script>
 </body>
