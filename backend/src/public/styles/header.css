@@ -1,0 +1,47 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    height: 5rem;
+    font-family: 'Open Sans', sans-serif;
+    border-bottom: 2px solid #6e92b5;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+}
+
+.logo-container img {
+    width: 5rem;
+}
+
+.nav-links {
+    margin: auto 0;
+    display: flex;
+    color: black;
+}
+
+.nav-links a {
+    margin: auto 1rem;
+    position: relative;
+    transition: color 200ms;
+}
+
+.nav-links a:hover {
+    color: #6e92b5;
+}
+
+.nav-links a::before {
+    content: '';
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    width: 0%;
+    height: 2px;
+    background-color: #6e92b5;
+    transition: width 200ms;
+}
+
+.nav-links a:hover::before {
+    width: 100%;
+}
