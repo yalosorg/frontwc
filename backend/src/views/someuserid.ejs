@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WaterCloud</title>
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <link rel="stylesheet" href="../../styles/header.css" />
+    <script src="../../js/utils.js"></script>
+  </head>
+  <body>
+    <%- include('partials/header') %>
+
+    <main>
+      <div class="user-container">
+        <h2>Информация о пользователе #<%= id %></h2>
+
+        <div class="user-info">
+          <h3 class="email"></h3>
+          <h3 class="username"></h3>
+          <h3 class="error"></h3>
+        </div>
+
+        <div class="user-buttons">
+          <a
+            class="download-unique"
+            href="/api/download-unique?id=SOME_UNIQUE_USER_ID"
+            >Скачать уникальные ресурсы</a
+          >
+          <a class="ban-user" href="/api/ban-user?id=SOME_UNIQUE_USER_ID"
+            >Заблокировать</a
+          >
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // pulling user from api
+
+      fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/user/me`, {
+        method: "get",
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Unauthorized");
+        })
+        .then((data) => {
+          if (!data.user || !data.user.isAdmin) return loc.replace("/");
+        });
+
+      fetch(
+        `${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/getUser/${"<%= id %>"}`,
+        {
+          method: "get",
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+        .then((res) => { if (res.ok) return res.json(); throw new Error('No user like this is found'); })
+        .then((data) => {
+            document.querySelector('.email').innerHTML = "Email: " + data.user.email;
+            document.querySelector('.username').innerHTML = "Username: " + data.user.login;
+        })
+        .catch((e) => document.querySelector('.error').innerHTML = "Error: 404, No such user is found");
+    </script>
+  </body>
+</html>

@@ -19,7 +19,7 @@ app.use(passport.initialize());
 require('./middleware/passport.js')(passport);
 
 app.set('views engine', 'ejs');
-app.use(express.static('public'));
+app.use(express.static(__dirname + '/public'));
 
 app.use(morgan('dev'))
 app.use('uploads', express.static('uploads'));

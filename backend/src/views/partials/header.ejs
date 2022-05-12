@@ -1,13 +1,24 @@
 <header>
-    <div class="logo-container">
-        <img src="/img/logo.png">
-        <a href="/"><h1>Water<span class="cloud-colored">Cloud</span></h1></a>
-    </div>
+  <div class="logo-container">
+    <img src="/img/logo.png" />
+    <a href="/"
+      ><h1>Water<span class="cloud-colored">Cloud</span></h1></a
+    >
+  </div>
 
-    <nav class="nav-links">
-        <a href="/storage.html">Хранилище</a>
-        <a href="/subscription.html">Подписка</a>
-        <a href="/login.html">Войти</a>
-        <a href="/logout">Выйти</a>
-    </nav>
+  <nav class="nav-links">
+    <a href="/storage" class="storage-btn">Хранилище</a>
+    <a href="/subscription" class="subscription-btn">Подписка</a>
+    <a href="/login" class="login-btn">Войти</a>
+    <a href="/logout" class="logout-btn">Выйти</a>
+  </nav>
 </header>
+
+<script>
+    if (token) document.querySelector('.login-btn').style.display = 'none';
+    else {
+      document.querySelector('.logout-btn').style.display = 'none'; 
+      document.querySelector('.storage-btn').style.display = 'none';
+      document.querySelector('.subscription-btn').style.display = 'none';
+    }
+</script>

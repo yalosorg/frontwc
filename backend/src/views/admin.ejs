@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+  </head>
+  <body>
+    <%- include('partials/header') %>
+
+    <main>
+      <div class="users">
+      </div>
+
+      <h2 style="margin: 1rem">Upload</h2>
+
+      <form class="upload-form">
+        <input type="file" class="file-upload" />
+        <button type="submit">Загрузить</button>
+      </form>
+
+      <button class="final-upload">Опубликовать</button>
+    </main>
+
+    <script>
+      // pulling user from api
+
+      fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/user/me`, {
+        method: "get",
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Unauthorized");
+        })
+        .then((data) => {
+          if (!data.user || !data.user.isAdmin) return loc.replace("/");
+        });
+
+
+      // rendering all users
+
+      fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/getAllUsers`, {
+        method: "get",
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          const usersDiv = document.querySelector('.users');
+
+          const users = data.users;
+          users.forEach((user, i) => {
+            //  <a class="user-link" href="/user/${user._id}">${user.login}</a>
+            let el = document.createElement('a');
+            el.href = `/admin/user/${user._id}`;
+            el.text = user.login;
+            el.className = 'user-link';
+            usersDiv.appendChild(el);
+          });
+        });
+
+      let form = document.querySelector(".upload-form");
+      const input = document.querySelector(".file-upload");
+
+      // form submition
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+
+        formData.append("resource.zip", input.files[0]);
+
+        fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/upload`, {
+          method: "post",
+          headers: {
+            headers: { "Content-Type": "multipart/form-data" },
+            Authorization: token,
+          },
+          body: formData,
+        }).catch(console.error);
+      });
+
+      let final = document.querySelector(".final-upload");
+      final.addEventListener("click", () => {
+        fetch(
+          `${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/upload-end`,
+          {
+            method: "post",
+            headers: { "Content-Type": "multipart/form-data" },
+            body: new FormData(),
+          }
+        ).catch(console.error);
+      });
+    </script>
+  </body>
+</html>

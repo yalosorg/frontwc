@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('partials/head') %>
+  </head>
+  <body>
+    <%- include('partials/header') %>
+
+    <main>
+      <div class="login-form">
+        <div class="title-container">
+          <h2 class="title">Войти</h2>
+        </div>
+
+        <form>
+          <input
+            class="input input-login"
+            type="text"
+            name="login"
+            placeholder="Логин"
+          />
+          <input
+            class="input input-password"
+            type="password"
+            name="password"
+            placeholder="Пароль"
+          />
+          <input
+            class="submit-button"
+            type="submit"
+            name="submit-button"
+            value="Войти"
+          />
+        </form>
+
+        <a class="switch-to-register" href="/register">Зарегистрироваться</a>
+      </div>
+    </main>
+
+    <script>
+      if (token) loc.replace("/");
+
+      document
+        .querySelector(".submit-button")
+        .addEventListener("click", (e) => {
+          e.preventDefault();
+
+          let login = document.querySelector(".input-login").value;
+          let password = document.querySelector(".input-password").value;
+
+          fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/auth/login`, {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              login: login,
+              password: password,
+            }),
+          })
+            .then((res) => {
+              if (res.ok) return res.json();
+              throw new Error('Login or password incorrect');
+            })
+            .then((data) => {
+              console.log(data);
+              document.cookie = "token=" + data.token;
+              loc.replace("/");
+            })
+            // тут можно кинуть ошибку в сам DOM, ничего сложного
+            .catch((e) => console.log(e));
+        });
+    </script>
+  </body>
+</html>
