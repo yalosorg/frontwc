@@ -12,64 +12,53 @@
         <a target="_blank" href="/storage/download-new">Скачать новое</a>
       </div>
 
-      <div class="storage-list">
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-        <a href="/storage/FILEID" class="storage-file">
-          <img src="/img/file_icon.png" />
-          <div class="file-info">
-            <h4>SOME UNIQUE ID</h4>
-            <h4>Size: 10Mb</h4>
-          </div>
-        </a>
-      </div>
+      <div class="storage-list"></div>
     </main>
+    <script>
+      fetch(
+        `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/getmyresources`,
+        {
+          method: "get",
+          headers: {
+            Authorization: token,
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const storageListDiv = document.querySelector(".storage-list");
+
+          const files = data;
+          files.forEach((file, i) => {
+            // <img src="/img/file_icon.png" />
+            //   <div class="file-info">
+            //     <h4>SOME UNIQUE ID</h4>
+            //     <h4>Size: 10Mb</h4>
+            //   </div>
+
+            // <a href="/storage/FILEID" class="storage-file">
+
+            let storageItem = document.createElement("a");
+            storageItem.className = "storage-file";
+            storageListDiv.appendChild(storageItem);
+            let img = document.createElement("img");
+            img.src = "/img/file_icon.png";
+            storageItem.appendChild(img);
+            let fileInfo = document.createElement("div");
+            fileInfo.className = "file-info";
+            let idDisplayh4 = document.createElement("h4");
+            idDisplayh4.innerText = "Id: " + file._id;
+            let sizeDisplayh4 = document.createElement("h4");
+            sizeDisplayh4.innerText =
+              "Size: " + (file.size / 1000000).toFixed(3) + "mb";
+            fileInfo.appendChild(idDisplayh4);
+            fileInfo.appendChild(sizeDisplayh4);
+            storageItem.appendChild(fileInfo);
+            storageItem.addEventListener('click', (e) => {
+              window.open(`${loc.protocol}//${loc.hostname}:${loc.port}/storage/${file.name}`);
+            });
+          });
+        });
+    </script>
   </body>
 </html>

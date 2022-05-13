@@ -164,8 +164,6 @@ module.exports.uploadFile = (req, res) => {
     const file = req.file;
     const isAdmin = req.user.isAdmin;
 
-    console.log(req.user)
-
     if (!isAdmin) {
         return res.status(403).json({
             message: 'Access denied'

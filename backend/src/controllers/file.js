@@ -45,7 +45,7 @@ module.exports.getMyResources = async (req, res) => {
 module.exports.download = async (req, res) => {
     try {
         const userId = req.user._id;
-        const fileName = req.body.file_name;
+        const fileName = req.params.file_name;
 
         const file = await Resource.findOne({ name: fileName, user: userId }).lean();
 
@@ -55,9 +55,7 @@ module.exports.download = async (req, res) => {
             });
         }
 
-        res.setHeader('Content-disposition', 'attachment; filename=resources.zip');
-        res.setHeader('Content-type', 'application/zip');
-        return res.download(file.path);
+        return res.download(file.path, file.name);
     } 
     
     catch (err) {

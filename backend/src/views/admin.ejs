@@ -12,7 +12,7 @@
 
       <h2 style="margin: 1rem">Upload</h2>
 
-      <form class="upload-form">
+      <form class="upload-form" method="post" enctype="multipart/form-data">
         <input type="file" class="file-upload" />
         <button type="submit">Загрузить</button>
       </form>
@@ -70,7 +70,8 @@
 
         const formData = new FormData();
 
-        formData.append("resource.zip", input.files[0]);
+        formData.append("zip", input.files[0]);
+        console.log(formData.get("zip"))
 
         fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/upload`, {
           method: "post",
@@ -82,6 +83,8 @@
         }).catch(console.error);
       });
 
+
+      // этот фетч не работает тк в апи нет такого ендпоинта
       let final = document.querySelector(".final-upload");
       final.addEventListener("click", () => {
         fetch(
