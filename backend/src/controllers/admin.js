@@ -7,6 +7,9 @@ const User = require('../models/User.js');
  * @returns 
  */
 
+// ТАК СМОТРИ, вот эта функция ренью на количество часов увеличивает длительность подписки
+// может только админ, щас мы просто ендпоинт создадим новый типа хендлпэй, и там тоже самое пропишем по факту, ну алгоритм сам
+
 module.exports.renew = async (req, res) => {
     const user_id = req.body?.user_id;
     const time = req.body.hours;

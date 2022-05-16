@@ -9,7 +9,7 @@ config.server = {
 }
 
 config.mongoose = {
-    uri: "mongodb://localhost:27017/test",
+    uri: "mongodb://127.0.0.1:27017",
     options: {
         useNewUrlParser: true
     }
