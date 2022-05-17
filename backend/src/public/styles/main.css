@@ -20,6 +20,13 @@ main {
     font-family: 'Roboto', sans-serif;
 }
 
+button {
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
 .subscription-form {
     margin: 1rem auto;
     height: 400px;
@@ -91,7 +98,7 @@ main {
     display: flex;
 }
 
-.top-buttons a {
+.top-buttons button {
     margin: 0 1rem;
     background-color: #639bc2;
     color: white;

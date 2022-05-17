@@ -23,14 +23,8 @@
         </div>
 
         <div class="user-buttons">
-          <a
-            class="download-unique"
-            href="/api/download-unique?id=SOME_UNIQUE_USER_ID"
-            >Скачать уникальные ресурсы</a
-          >
-          <a class="ban-user" href="/api/ban-user?id=SOME_UNIQUE_USER_ID"
-            >Заблокировать</a
-          >
+          <button class="download-unique">Скачать уникальные ресурсы</button>
+          <button class="ban-user">Заблокировать</button>
         </div>
       </div>
     </main>
@@ -53,7 +47,9 @@
         });
 
       fetch(
-        `${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/getUser/${"<%= id %>"}`,
+        `${loc.protocol}//${loc.hostname}:${
+          loc.port
+        }/api/admin/getUser/${"<%= id %>"}`,
         {
           method: "get",
           headers: {
@@ -61,12 +57,51 @@
           },
         }
       )
-        .then((res) => { if (res.ok) return res.json(); throw new Error('No user like this is found'); })
-        .then((data) => {
-            document.querySelector('.email').innerHTML = "Email: " + data.user.email;
-            document.querySelector('.username').innerHTML = "Username: " + data.user.login;
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("No user like this is found");
         })
-        .catch((e) => document.querySelector('.error').innerHTML = "Error: 404, No such user is found");
+        .then((data) => {
+          document.querySelector(".email").innerHTML =
+            "Email: " + data.user.email;
+          document.querySelector(".username").innerHTML =
+            "Username: " + data.user.login;
+        })
+        .catch(
+          (e) =>
+            (document.querySelector(".error").innerHTML =
+              "Error: 404, No such user is found")
+        );
+
+      document
+        .querySelector(".download-unique")
+        .addEventListener("click", () => {
+          fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/file/download-unique/${'<%= id %>'}`, {
+            method: "get",
+            headers: {
+              Authorization: token,
+            },
+          })
+            .then(res => res.blob())
+            .then(blob => {
+              loc.replace(window.URL.createObjectURL(blob));
+            });
+        });
+
+      document
+        .querySelector('.ban-user')
+        .addEventListener('click', () => {
+          fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/admin/cancel`, {
+            method: 'post',
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: token,
+            },
+            body: JSON.stringify({
+              user_id: '<%= id %>'
+            })
+          });
+        });
     </script>
   </body>
 </html>

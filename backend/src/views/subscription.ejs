@@ -25,7 +25,7 @@
     </main>
 
     <script>
-        let option = 0;
+        let amount = '';
         let first = document.querySelector('.option-first');
         let second = document.querySelector('.option-second');
         let third = document.querySelector('.option-third');
@@ -34,27 +34,37 @@
             first.classList.add('active');
             second.classList.remove('active');
             third.classList.remove('active');
-            option = 1;
+            amount = '1';
         });
 
         second.addEventListener('click', () => {
             first.classList.remove('active');
             second.classList.add('active');
             third.classList.remove('active');
-            option = 2;
+            amount = '2';
         });
 
         third.addEventListener('click', () => {
             first.classList.remove('active');
             second.classList.remove('active');
             third.classList.add('active');
-            option = 3;
+            amount = '3';
         });
 
         document.querySelector('.button-pay').addEventListener('click', () => {
-            if (option <= 0 || option > 3) return;
-
-            // FETCH GENERATED LINK FROM SERVER
+            fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/user/genlink`, {
+                method: 'post',
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: token
+                },
+                body: JSON.stringify({ amount })
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log(data);
+                    loc.replace(data.url);
+                });
         });
     </script>
 </body>

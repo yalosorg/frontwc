@@ -33,8 +33,4 @@ router.get('/storage', (req, res) => {
     res.render('../src/views/storage.ejs');
 });
 
-router.get('/storage/:file_name', (req, res) => {
-    res.render('../src/views/download-file.ejs', { file_name: req.params.file_name });
-});
-
 module.exports = router;

@@ -2,7 +2,81 @@ const User = require('../models/User.js');
 const Resource = require('../models/Resource.js');
 
 const fs = require('fs');
-const unzipper = require('unzipper');
+//const unzipper = require('unzipper');
+const JSZip = require('jszip');
+const path = require('path');
+
+module.exports.downloadAll = async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        const zip = new JSZip();
+        
+        let uniqueFiles = await Resource.find({ user: userId }).lean();
+        if (uniqueFiles.length == 0) uniqueFiles = [];
+
+        uniqueFiles.map(file => {
+            const data = fs.readFileSync(file.path);
+            zip.file(path.basename(file.path), data);
+        });
+        
+        fs.readdirSync('uploads/shared').map(file => {
+            const data = fs.readFileSync(`uploads/shared/${file}`);
+            zip.file(file, data);
+        });
+
+        zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true }).pipe(fs.createWriteStream('all.zip')).on('finish', () => {
+            console.log('all.zip bundled');
+            res.download('all.zip');
+        });
+    } catch (err) {
+        res.status(400).json({ error: err });
+    }
+};
+
+module.exports.downloadNew = async (req, res) => {
+    const userId = req.user._id;
+
+    try {
+        const zip = new JSZip();
+
+        let uniqueFiles = await Resource.find({ user: userId }).lean();
+        if (files.length == 0) uniqueFiles = [];
+
+        uniqueFiles.map(file => {
+            // GET DATE BY NAME
+            let fn = path.basename(path.basename(file.path), path.extname(file.path));
+            // fn = fn - "-newzip" at the end
+            fn.substring(0, fn.length - 7);
+            let uploaded = new Date(fn); // надеюсь спарситься блять
+            let today = new Date();
+
+            if (uploaded.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
+                const data = fs.readFileSync(file.path);
+                zip.file(path.basename(file.path), data);
+            }
+        });
+
+        fs.readdirSync('uploads/shared').map(file => {
+            let fn = path.basename(file);
+            fn.substring(0, fn.length - 7);
+            let uploaded = new Date(fn);
+            let today = new Date();
+            
+            if (uploaded.setHours(0, 0, 0, 0) == today.setHours(0, 0, 0, 0)) {
+                const data = fs.readFileSync(`uploads/shared/${file}`);
+                zip.file(file, data);
+            }
+        });
+
+        zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true }).pipe(fs.createWriteStream('new.zip')).on('finish', () => {
+            console.log('new.zip bundled');
+            res.download('new.zip');
+        });
+    } catch (err) {
+        res.status(400).json({ error: err });
+    }
+}
 
 // module.exports.downloadAll = async (req, res) => {
 //     const user = await User.findById(req.user._id);
@@ -26,90 +100,140 @@ module.exports.sharedResources = async (req, res) => {
             path: `uploads/shared/${file}`,
             size: fs.statSync(`./uploads/shared/${file}`).size
         }
-     });
+    });
 
-    if(files.length === 0) {
-        res.status(200).json({
-            message: 'No files found'
-        });
+    console.log(files);
+
+    if (files.length === 0) {
+        return res.status(200).json([]);
     }
 
-    res.status(200).send(files);
+    res.status(200).json(files);
 }
 
 module.exports.getMyResources = async (req, res) => {
-    const resources = await Resource.find({user: req.user._id}).lean();
-    res.status(200).send(resources);
+    const resources = await Resource.find({ user: req.user._id }).lean();
+    if (!resources) return res.status(200).json([]);
+
+    res.status(200).json(resources);
 };
 
-module.exports.download = async (req, res) => {
+module.exports.downloadUnique = async (req, res) => {
     try {
-        const userId = req.user._id;
-        const fileName = req.params.file_name;
+        const userId = req.params.user_id;
 
-        const file = await Resource.findOne({ name: fileName, user: userId }).lean();
+        const files = await Resource.find({ user: userId }).lean();
+        if (files.length == 0) return res.status(404).json({ message: 'no files found' });
+        // найти все файлы в бд с unique юзером и найти сами файлы в uploads/unique и запихнуть все это в один архив
 
-        if(!file) {
-            return res.status(404).json({
-                message: 'File not found'
-            });
+
+        // name: { type: String, required: true, unique: true },
+        // path: { type: String, required: true },
+
+        // size: { type: Number, required: true },
+        // user: {
+        //     ref: 'Accounts',
+        //         type: Schema.Types.ObjectId
+        // }
+
+        // file.path КОРОЧЕ ДА
+
+        let zip = new JSZip();
+
+        for (const file of files) {
+            console.log(file);
+            const data = fs.readFileSync(file.path);
+            zip.file(path.basename(file.path), data);
         }
 
-        return res.download(file.path, file.name);
-    } 
-    
+        // files.forEach(file => {
+        //     console.log(file);
+        //     const data = fs.readFileSync(file.path);
+        //     zip.file(path.basename(file.path), data);
+        // });
+
+        zip.generateNodeStream({ type: 'nodebuffer', streamFiles: true })
+            .pipe(fs.createWriteStream('sample.zip'))
+            .on('finish', function () {
+                console.log("sample.zip written.");
+                res.download('sample.zip');
+            });
+    }
+
     catch (err) {
         res.status(500).json({
             message: err
         });
     }
+};
+
+module.exports.download = async (req, res) => {
+    const fileName = req.body.file_name;
+    // через fs найти файл с этим именем и скачать
+    const existsInShared = fs.existsSync(`./uploads/shared/${fileName}`);
+    if (!existsInShared) {
+        const existsInUnique = fs.existsSync(`./uploads/unique/${fileName}`);
+        if (!existsInUnique)
+            return res.status(404).json({ message: "file doesn't exist" });
+
+        // файл находится в папке unique
+        return res.status(200).download(`./uploads/unique/${fileName}`);
+    }
+
+    // файл находится в папке shared
+    return res.status(200).download(`./uploads/shared/${fileName}`);
 }
 
-module.exports.uploadFileEnd = async(req, res) => {
+// function formatFileSize(bytes, decimalPoint) {
+//     if (bytes == 0) return '0 Bytes';
+//     var k = 1000,
+//         dm = decimalPoint || 2,
+//         sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'],
+//         i = Math.floor(Math.log(bytes) / Math.log(k));
+//     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+// }
+
+module.exports.uploadFileEnd = async (req, res) => {
     const isAdmin = req.user.isAdmin;
 
-    if(!isAdmin) {
+    if (!isAdmin) {
         return res.status(403).json({
             message: 'Access denied'
         });
     }
 
-    const subscribes = await User.find({ subscription: { $gt: new Date().getTime() } }, { subscription: 1, _id: 1})
-    
-    const fn = fs.readdirSync('./uploads/tpm')[0]
+    const subscribes = await User.find({ subscription: { $gt: new Date().getTime() } }, { subscription: 1, _id: 1 })
+    console.log(subscribes);
 
-    const zip = fs.createReadStream('uploads/tpm/' + fn).pipe(unzipper.Parse({forceStream: true}));
-    let add = 0;
+    const fn = fs.readdirSync('./uploads/tpm')[0];
 
-    for await(const entry of zip) {
-        const fileName = entry.path;
-        const type = entry.type;
-        const size = entry.vars.uncompressedSize;
+    const files = fs.readdirSync('./uploads/tpm');
+    console.log(files);
 
-        if(type === 'File') {
-            if(add < subscribes.length) {
-                entry.pipe(fs.createWriteStream('uploads/unique/'));
+    let unique = 0;
+    files.forEach(async file => {
+        const type = file.type;
 
-                const user = subscribes[add];
+        // в бд сайз хранится в байтах поэтому это нихуя не нужно оно наоборот ебаную ошибку кидает
+        // const size = formatFileSize(fs.statSync(`./uploads/tpm/${file}`).size);
 
-                await Resource.create({
-                    name: fileName,
-                    path: `uploads/unique/${fileName}`,
-                    size,
-                    user: user._id
-                });
-                add++
-            }
-    
-            else {
-                entry.pipe(fs.createWriteStream('uploads/shared/'));
-            }
+        if (unique < subscribes.length && subscribes.length !== 0) {
+            fs.copyFileSync(`./uploads/tpm/${file}`, `./uploads/unique/${file}`);
+
+            const user = subscribes[unique];
+            await Resource.create({
+                name: file,
+                path: `./uploads/unique/${file}`,
+                size: fs.statSync(`./uploads/tpm/${file}`).size,
+                user: user._id
+            });
+            unique++;
+        } else {
+            fs.copyFileSync(`./uploads/tpm/${file}`, `./uploads/shared/${file}`);
         }
-    }
 
-    fs.unlinkSync('./uploads/tpm/' + fn);
-
-    return res.status(200).json({
-        message: 'File unpucking'
+        fs.unlinkSync(`./uploads/tpm/${file}`);
     });
+
+    return res.status(200).json({ message: 'Files published' });
 }

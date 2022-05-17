@@ -8,56 +8,131 @@
 
     <main>
       <div class="top-buttons">
-        <a target="_blank" href="/storage/download-all">Скачать всё</a>
-        <a target="_blank" href="/storage/download-new">Скачать новое</a>
+        <button target="_blank" class="download-all-btn">Скачать всё</button>
+        <button target="_blank" class="download-new-btn">Скачать новое</button>
       </div>
 
       <div class="storage-list"></div>
     </main>
     <script>
-      fetch(
-        `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/getmyresources`,
-        {
-          method: "get",
-          headers: {
-            Authorization: token,
-          },
-        }
-      )
-        .then((res) => res.json())
+      fetch(`${loc.protocol}//${loc.hostname}:${loc.port}/api/user/me`, {
+        method: "get",
+        headers: {
+          Authorization: token,
+        },
+      })
+        .then((res) => {
+          if (res.ok) return res.json();
+          throw new Error("Unauthorized");
+        })
         .then((data) => {
-          const storageListDiv = document.querySelector(".storage-list");
+          const subscribed = data.user.subscription > new Date().getUTCDate();
+          // if (!subscribed) loc.replace("/subscription");
+        });
 
-          const files = data;
-          files.forEach((file, i) => {
-            // <img src="/img/file_icon.png" />
-            //   <div class="file-info">
-            //     <h4>SOME UNIQUE ID</h4>
-            //     <h4>Size: 10Mb</h4>
-            //   </div>
+      async function getFiles() {
+        let sharedFiles = await fetch(
+          `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/sharedresources`,
+          {
+            method: "get",
+            headers: {
+              Authorization: token,
+            },
+          }
+        ).then((res) => res.json());
 
-            // <a href="/storage/FILEID" class="storage-file">
+        let uniqueFiles = await fetch(
+          `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/getmyresources`,
+          {
+            method: "get",
+            headers: {
+              Authorization: token,
+            },
+          }
+        ).then((res) => res.json());
 
-            let storageItem = document.createElement("a");
-            storageItem.className = "storage-file";
-            storageListDiv.appendChild(storageItem);
-            let img = document.createElement("img");
-            img.src = "/img/file_icon.png";
-            storageItem.appendChild(img);
-            let fileInfo = document.createElement("div");
-            fileInfo.className = "file-info";
-            let idDisplayh4 = document.createElement("h4");
-            idDisplayh4.innerText = "Id: " + file._id;
-            let sizeDisplayh4 = document.createElement("h4");
-            sizeDisplayh4.innerText =
-              "Size: " + (file.size / 1000000).toFixed(3) + "mb";
-            fileInfo.appendChild(idDisplayh4);
-            fileInfo.appendChild(sizeDisplayh4);
-            storageItem.appendChild(fileInfo);
-            storageItem.addEventListener('click', (e) => {
-              window.open(`${loc.protocol}//${loc.hostname}:${loc.port}/storage/${file.name}`);
-            });
+        const files = [...sharedFiles, ...uniqueFiles];
+        console.log(files);
+
+        const storageListDiv = document.querySelector(".storage-list");
+
+        files.forEach((file, i) => {
+          console.log(file);
+
+          let storageItem = document.createElement("a");
+          storageItem.className = "storage-file";
+          storageListDiv.appendChild(storageItem);
+          let img = document.createElement("img");
+          img.src = "/img/file_icon.png";
+          storageItem.appendChild(img);
+          let fileInfo = document.createElement("div");
+          fileInfo.className = "file-info";
+          let idDisplayh4 = document.createElement("h4");
+          idDisplayh4.innerText = "Id: " + file._id;
+          let sizeDisplayh4 = document.createElement("h4");
+          sizeDisplayh4.innerText =
+            "Size: " + (file.size / 1000000).toFixed(3) + "mb";
+          fileInfo.appendChild(idDisplayh4);
+          fileInfo.appendChild(sizeDisplayh4);
+          storageItem.appendChild(fileInfo);
+          storageItem.addEventListener("click", (e) => {
+            fetch(
+              `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/download/`,
+              {
+                method: "post",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: token,
+                },
+                body: JSON.stringify({
+                  file_name: file.name,
+                }),
+              }
+            )
+              .then((res) => res.blob())
+              .then((blob) => {
+                loc.replace(window.URL.createObjectURL(blob));
+              });
           });
+        });
+      }
+
+      getFiles();
+
+      document
+        .querySelector(".download-all-btn")
+        .addEventListener("click", () => {
+          fetch(
+            `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/download-all`,
+            {
+              method: "get",
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+            .then((res) => res.blob())
+            .then((blob) => {
+              loc.replace(window.URL.createObjectURL(blob));
+            });
+        });
+
+      document
+        .querySelector(".download-new-btn")
+        .addEventListener("click", () => {
+          fetch(
+            `${loc.protocol}//${loc.hostname}:${loc.port}/api/file/download-new`,
+            {
+              method: "get",
+              headers: {
+                Authorization: token,
+              },
+            }
+          )
+            .then((res) => res.blob())
+            .then((blob) => {
+              loc.replace(window.URL.createObjectURL(blob));
+            });
         });
     </script>
   </body>

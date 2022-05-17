@@ -83,7 +83,8 @@ module.exports.cancel = async (req, res) => {
         });
     }
 
-    const user = User.findOne({ _id: user_id }, { _id: 1, subscription: 1 });
+    const user = await User.findOne({ _id: user_id }, { _id: 1, subscription: 1 });
+    console.log(user.subscription);
 
     if (!user) {
         return res.status(404).json({
