@@ -27,7 +27,7 @@
         })
         .then((data) => {
           const subscribed = data.user.subscription > new Date().getUTCDate();
-          // if (!subscribed) loc.replace("/subscription");
+          if (!subscribed) loc.replace("/subscription");
         });
 
       async function getFiles() {
